@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="POST" action="/">
+{{ form.municipio.label }}
+    <select class="form-select" aria-label="Default select example" name="municipio">
+            <option selected>Seleccione el municipio</option>
+            {% for m in municipios %}
+                <option>{{ m }}</option>
+            {% endfor %}
+        </select>
+<button type="submit" class="btn">Consultar</button>
+{% if show == 1 %}
+
+    <h1>Gráfica de los 5 Animales más Comunes en {{ municipio }}</h1>
+    <img src="{{ url_for('static', filename='images/grafica.png') }}" alt="Gráfica de Animales">
+    <h2>Imágenes de los Animales</h2>
+    <div>
+        {% for animal, image_url in animales_imagenes.items() %}
+            <h3>{{ animal }}</h3>
+            <img src="{{ image_url }}" alt="Imagen de {{ animal }}" width="300" height="200">
+        {% endfor %}
+    </div>
+
+{% endif %}
+    </form>
+</body>
+</html>
