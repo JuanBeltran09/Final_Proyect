@@ -28,15 +28,8 @@ def index():
                                show=show,
                                municipio = munForm.municipio.data,
                                animal_info = animal_info)
-        #return redirect(url_for('analisis', municipio=munForm.municipio.data))
 
     return render_template("index.html", municipios=municipios, form = munForm)
-
-@app.route('/analisis/<municipio>')
-def analisis(municipio):
-    print(municipio)
-    grafica, animales_imagenes = graficar(df,municipio,subscription_key,search_url)
-    return render_template("graficas.html", grafica = grafica, municipio = municipio, animales_imagenes = animales_imagenes)
 
 if __name__ == '__main__':
     app.run()
