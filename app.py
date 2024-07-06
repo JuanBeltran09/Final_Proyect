@@ -20,9 +20,14 @@ def index():
     if request.method == 'POST':
         municipio = request.form.get('municipio')
         munForm.municipio.data = municipio
-        grafica, animales_imagenes = graficar(df, municipio, subscription_key, search_url)
+        animal_info = graficar(df, municipio, subscription_key, search_url)
         show = 1
-        return render_template("index.html", municipios=municipios, form=munForm, show=show, municipio = munForm.municipio.data, grafica = grafica, animales_imagenes = animales_imagenes)
+        return render_template("index.html",
+                               municipios=municipios,
+                               form=munForm,
+                               show=show,
+                               municipio = munForm.municipio.data,
+                               animal_info = animal_info)
         #return redirect(url_for('analisis', municipio=munForm.municipio.data))
 
     return render_template("index.html", municipios=municipios, form = munForm)

@@ -5,16 +5,17 @@ import Filtro_Df as fil
 import httpx
 
 
-def obtener_imagen(animal_name, subscription_key, search_url):
+def obtener_imagen(animal_name, subscription_key, search_url, clase):
     api_key = subscription_key
     image_search_endpoint = search_url
 
     headers = {'Ocp-Apim-Subscription-Key': api_key}
 
-    query = animal_name + " animal"
+    query = animal_name + clase
 
     params = {"q": query, "license": "public", "imageType": "photo", 'count': '50', 'offset': '0'}
 
+    default_image_url = "https://thumbs.dreamstime.com/b/animales-de-la-selva-65642301.jpg"
     try:
         response = httpx.get(image_search_endpoint, headers=headers, params=params)
         response.raise_for_status()  # Lanza una excepción si la respuesta no es exitosa
@@ -26,13 +27,13 @@ def obtener_imagen(animal_name, subscription_key, search_url):
             return resultset['value'][0]['contentUrl']
         else:
             print(f"No se encontraron resultados de imágenes para {animal_name}")
-            return None
+            return default_image_url
     except httpx.HTTPStatusError as http_err:
         print(f"Error HTTP: {http_err}")
-        return None
+        return default_image_url
     except Exception as err:
         print(f"Otro error: {err}")
-        return None
+        return default_image_url
 def graficar(df, mun,subscription_key, search_url):
 
     df_municipality = fil.filtro_Municipio(df,mun)
@@ -54,6 +55,16 @@ def graficar(df, mun,subscription_key, search_url):
     plt.savefig(image_path)
     plt.close()
 
-    animal_images = {animal: obtener_imagen(animal, subscription_key, search_url) for animal in top_5_animals}
+    animal_info = {}
+    for animal in top_5_animals:
+        animal_data = df_top_5_animals[df_top_5_animals['vernacularName'] == animal].iloc[0]
+        image_url = obtener_imagen(animal, subscription_key, search_url, animal_data['class'])
+        animal_info[animal] = {
+            'image_url': image_url,
+            'family': animal_data['family'],
+            'locality': animal_data['locality'],
+            'habitat': animal_data['habitat'],
+            'class': animal_data['class']
+        }
 
-    return image_path, animal_images
+    return animal_info
